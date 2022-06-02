@@ -30,7 +30,7 @@ const onLoadMoreFetchAmount = 5;
 
 const Tracks = ({ showAllBeats = false }) => {
   const [beats, setBeats] = useState({});
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [showPlayer, setShowPlayer] = useState(false);
   const [beatPlaying, setBeatPlaying] = useState(null);
   const playerRef = useRef();
   const [loading, setLoading] = useState(null);
@@ -90,10 +90,13 @@ const Tracks = ({ showAllBeats = false }) => {
 
   const playAudio = (beat) => {
     if (beatPlaying?.id_video === beat.id_video) {
-      playerRef.current();
+      playerRef.current.toggle();
     } else {
+      if (!playerRef.current.isPlaying) {
+        playerRef.current.toggle();
+      }
       setBeatPlaying(beat);
-      setIsPlaying(true);
+      setShowPlayer(true);
     }
   };
 
@@ -276,7 +279,7 @@ const Tracks = ({ showAllBeats = false }) => {
         handleNextBeat={() => handlePlayNextBeat(true)}
         handlePreBeat={() => handlePlayNextBeat(false)}
         playerRef={playerRef}
-        isPlaying={isPlaying}
+        isVisible={showPlayer}
       />
     </>
   );

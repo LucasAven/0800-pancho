@@ -7,7 +7,7 @@ const Player = ({
   handleNextBeat,
   handlePreBeat,
   playerRef,
-  isPlaying,
+  isVisible,
 }) => {
   const [player, setPlayer] = useState({});
   const [played, setPlayed] = useState(0);
@@ -17,7 +17,7 @@ const Player = ({
 
   const ref = (player) => {
     setPlayer(player);
-    playerRef.current = togglePlayer;
+    playerRef.current = { toggle: togglePlayer, isPlaying: playing };
   };
 
   const togglePlayer = () => {
@@ -49,7 +49,7 @@ const Player = ({
   };
 
   return (
-    <div className={isPlaying ? "player" : "player --hide"}>
+    <div className={isVisible ? "player" : "player --hide"}>
       <div className="player-left">
         <Image
           src={beat?.url_imagen ? beat.url_imagen : "/videos.svg"}
