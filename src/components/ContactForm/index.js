@@ -31,7 +31,6 @@ const ContactForm = ({ fullPage = false }) => {
   const onSubmit = async (data, e) => {
     setLoading(true);
     const res = await axios.post("/api/send-email", data);
-    console.log(res.data);
     if (res.data.ok === true) {
       setSuccess(true);
     } else {
