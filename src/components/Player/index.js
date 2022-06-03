@@ -1,23 +1,47 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ReactPlayer from "react-player";
 import { getTrackBackground, Range } from "react-range";
 import Image from "next/image";
-const Player = ({
-  beat,
-  handleNextBeat,
-  handlePreBeat,
-  playerRef,
-  isVisible,
-}) => {
-  const [player, setPlayer] = useState({});
+const Player = ({ beats, beat, isVisible }) => {
+  const [beatPlaying, setBeatPlaying] = useState(beat);
   const [played, setPlayed] = useState(0);
   const [volume, setVolume] = useState(1);
   const [loop, setLoop] = useState(false);
   const [playing, setPlaying] = useState(true);
+  const [currentTime, setCurrentTime] = useState({
+    minutes: "00",
+    seconds: "00",
+  });
+  const playerRef = useRef();
 
-  const ref = (player) => {
-    setPlayer(player);
-    playerRef.current = { toggle: togglePlayer, isPlaying: playing };
+  useEffect(() => {
+    setBeatPlaying(beat);
+  }, [beat]);
+
+  const playAudio = (beatPlayed) => {
+    if (beatPlaying?.id_video === beatPlayed.id_video) {
+      togglePlayer();
+    } else {
+      if (!playing) {
+        togglePlayer();
+      }
+      setBeatPlaying(beatPlayed);
+    }
+  };
+
+  const handlePlayNextBeat = (next = true) => {
+    // next=true siguiente, false previa
+    let beatsArr = Object.entries(beats); //[[key,{beat}],[key,{beat}]]
+    let beatActualIndex = beatsArr.findIndex(
+      (beat) => beat[0] === beatPlaying.key
+    );
+    if (next) {
+      if (beatActualIndex < beatsArr.length - 1)
+        playAudio(Object.values(beatsArr[beatActualIndex + 1])[1]); //[key,{beat}]
+    } else {
+      if (beatActualIndex >= 1)
+        playAudio(Object.values(beatsArr[beatActualIndex - 1])[1]);
+    }
   };
 
   const togglePlayer = () => {
@@ -25,6 +49,10 @@ const Player = ({
   };
 
   const handleProgress = (state) => {
+    setCurrentTime({
+      minutes: Math.trunc(state.playedSeconds / 60),
+      seconds: Math.trunc(state.playedSeconds % 60),
+    });
     setPlayed(state.played);
   };
 
@@ -33,7 +61,7 @@ const Player = ({
   };
 
   const handleSeekMouseUp = (value) => {
-    player.seekTo(parseFloat(value));
+    playerRef.current.seekTo(parseFloat(value));
   };
 
   const handleVolumeChange = (value) => {
@@ -52,22 +80,25 @@ const Player = ({
     <div className={isVisible ? "player" : "player --hide"}>
       <div className="player-left">
         <Image
-          src={beat?.url_imagen ? beat.url_imagen : "/videos.svg"}
+          src={beatPlaying?.url_imagen ? beatPlaying.url_imagen : "/videos.svg"}
           width={100}
           height={100}
           layout="responsive"
-          alt={beat?.titulo}
+          alt={beatPlaying?.titulo}
         />
       </div>
       <div className="player-right">
         <div className="player-content">
           <div className="player-info">
-            <span className="beat__title">{beat?.titulo}</span>
+            <span className="beat__title">{beatPlaying?.titulo}</span>
             <span className="beat__author">0800 Pancho</span>
           </div>
 
           <div className="player-buttons">
-            <div className="btn-player" onClick={() => handlePreBeat()}>
+            <div
+              className="btn-player"
+              onClick={() => handlePlayNextBeat(false)}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 aria-hidden="true"
@@ -121,7 +152,10 @@ const Player = ({
                 </svg>
               </div>
             )}
-            <div className="btn-player" onClick={() => handleNextBeat()}>
+            <div
+              className="btn-player"
+              onClick={() => handlePlayNextBeat(true)}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 aria-hidden="true"
@@ -278,12 +312,12 @@ const Player = ({
 
           <div style={{ display: "none" }}>
             <ReactPlayer
-              ref={ref}
+              ref={playerRef}
               onProgress={handleProgress}
               playing={playing}
               loop={loop}
               volume={volume}
-              onEnded={handleNextBeat}
+              onEnded={handlePlayNextBeat}
               config={{
                 youtube: {
                   playerVars: {
@@ -302,9 +336,19 @@ const Player = ({
                   },
                 },
               }}
-              url={`https://www.youtube.com/embed/${beat?.id_video}`}
+              url={`https://www.youtube.com/embed/${beatPlaying?.id_video}`}
             />
           </div>
+        </div>
+        <div className="player-duration">
+          <span>{`${currentTime.minutes.toLocaleString("en-US", {
+            minimumIntegerDigits: 2,
+            useGrouping: false,
+          })}:${currentTime.seconds.toLocaleString("en-US", {
+            minimumIntegerDigits: 2,
+            useGrouping: false,
+          })}`}</span>
+          <span>{beat?.duracion}</span>
         </div>
         <Range
           min={0}

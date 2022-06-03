@@ -11,12 +11,12 @@ import {
   startAfter,
   startAt,
 } from "firebase/database";
-import { useState, useEffect, useRef } from "react";
-import Player from "components/Player";
+import { useState, useEffect, useContext } from "react";
 import { useRouter } from "next/router";
 import SearchBar from "./SearchBar";
 import TracksTable from "./TracksTable";
 import Title from "components/Title";
+import PlayerContext from "contexts/PlayerContext";
 
 const database = getDatabase(firebaseApp);
 const dbRef = ref(database, "beats/");
@@ -30,15 +30,15 @@ const onLoadMoreFetchAmount = 5;
 
 const Tracks = ({ showAllBeats = false }) => {
   const [beats, setBeats] = useState({});
-  const [showPlayer, setShowPlayer] = useState(false);
-  const [beatPlaying, setBeatPlaying] = useState(null);
-  const playerRef = useRef();
   const [loading, setLoading] = useState(null);
   const [hasMore, setHasMore] = useState(true);
   const [showLoadMore, setShowLoadMore] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [currentTag, setCurrentTag] = useState(null);
   const navigate = useRouter();
+  const value = useContext(PlayerContext);
+  const { setShowPlayer, setBeatClicked, setBeatsList } = value;
+  const { beatClicked, beatsList } = value.state;
 
   useEffect(() => {
     setLoading(true);
@@ -62,6 +62,14 @@ const Tracks = ({ showAllBeats = false }) => {
         setBeats({});
       });
   }, [navigate, showAllBeats]);
+
+  useEffect(() => {
+    if (beatsList) {
+      if (Object.keys(beatsList).length !== Object.keys(beats).length) {
+        setBeatsList(beats);
+      }
+    }
+  }, [beats]);
 
   const loadDefaultBeats = () => {
     setShowLoadMore(true);
@@ -89,30 +97,12 @@ const Tracks = ({ showAllBeats = false }) => {
   };
 
   const playAudio = (beat) => {
-    if (beatPlaying?.id_video === beat.id_video) {
-      playerRef.current.toggle();
-    } else {
-      if (!playerRef.current.isPlaying) {
-        playerRef.current.toggle();
+    if (beatClicked?.id_video !== beat.id_video) {
+      setBeatClicked(beat);
+      if (!beatClicked) {
+        setShowPlayer(true);
+        setBeatsList(beats);
       }
-      setBeatPlaying(beat);
-      setShowPlayer(true);
-    }
-  };
-
-  const handlePlayNextBeat = (next) => {
-    // next=true siguiente, false previa
-    let beatsArr = Object.entries(beats); //[[key,{beat}],[key,{beat}]]
-    let beatActualIndex = beatsArr.findIndex(
-      (beat) => beat[0] === beatPlaying.key
-    );
-    if (next) {
-      if (beatActualIndex < beatsArr.length - 1)
-        playAudio(Object.values(beatsArr[beatActualIndex + 1])[1]);
-      //[key,{beat}]
-    } else {
-      if (beatActualIndex >= 1)
-        playAudio(Object.values(beatsArr[beatActualIndex - 1])[1]);
     }
   };
 
@@ -274,13 +264,6 @@ const Tracks = ({ showAllBeats = false }) => {
           )}
         </div>
       </section>
-      <Player
-        beat={beatPlaying}
-        handleNextBeat={() => handlePlayNextBeat(true)}
-        handlePreBeat={() => handlePlayNextBeat(false)}
-        playerRef={playerRef}
-        isVisible={showPlayer}
-      />
     </>
   );
 };
