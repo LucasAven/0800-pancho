@@ -37,7 +37,7 @@ const SearchBar = ({ onSearch, onReset }) => {
           <input
             type="search"
             className="search-bar"
-            placeholder="Escribe un titulo o género"
+            placeholder="Escribe un titulo"
             autoComplete="false"
             onFocus={() => setFocus(true)}
             onBlur={() => setFocus(false)}
