@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import ReactPlayer from "react-player";
 import { getTrackBackground, Range } from "react-range";
 import Image from "next/image";
@@ -6,6 +6,10 @@ import ChangeSongSVG from "components/svgs/ChangeSongSVG";
 import PlayPauseSVG from "components/svgs/PlayPauseSVG";
 import LoopSVG from "components/svgs/LoopSVG";
 import VolumeSVG from "components/svgs/VolumeSVG";
+import PlayerToggleSVG from "components/svgs/PlayerToggleSVG";
+import PlayerContext from "contexts/PlayerContext";
+import DownArrowSVG from "components/svgs/DownArrowSVG";
+
 const Player = ({ beats, beat, isVisible }) => {
   const [beatPlaying, setBeatPlaying] = useState(beat);
   const [played, setPlayed] = useState(0);
@@ -16,10 +20,12 @@ const Player = ({ beats, beat, isVisible }) => {
     minutes: "00",
     seconds: "00",
   });
+  const { setShowPlayer } = useContext(PlayerContext);
   const playerRef = useRef();
 
   useEffect(() => {
     setBeatPlaying(beat);
+    setPlaying(true);
   }, [beat]);
 
   const playAudio = (beatPlayed) => {
@@ -78,6 +84,23 @@ const Player = ({ beats, beat, isVisible }) => {
 
   return (
     <div className={isVisible ? "player" : "player --hide"}>
+      {beatPlaying && (
+        <button
+          className="player-toggle show"
+          onClick={() => setShowPlayer(!isVisible)}
+        >
+          {isVisible ? (
+            <DownArrowSVG width="30" height="30" fill="#000" />
+          ) : (
+            <PlayerToggleSVG
+              width="30"
+              height="30"
+              fill="#000"
+              className="player-headphones"
+            />
+          )}
+        </button>
+      )}
       <div className="player-left">
         <Image
           src={beatPlaying?.url_imagen ? beatPlaying.url_imagen : "/videos.svg"}

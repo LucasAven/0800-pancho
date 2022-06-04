@@ -436,7 +436,44 @@ td.beat__title {
 }
 
 .--hide {
-  bottom: -1000px;
+  bottom: -120px;
+}
+
+.player-toggle {
+  display: none;
+}
+
+.player-toggle.show {
+  display: block;
+  width: clamp(50px, 13%, 150px);
+  background: rgb(var(--primary-col));
+  height: 30px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translateY(-100%);
+  border: none;
+  border-radius: 15px 0 0;
+}
+.player-toggle svg {
+  width: 100%;
+  height: 100%;
+  padding: 5px 0;
+}
+.player-toggle .player-headphones {
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .player-left {
