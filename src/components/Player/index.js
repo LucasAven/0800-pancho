@@ -223,7 +223,7 @@ const Player = ({ beats, beat, isVisible }) => {
             minimumIntegerDigits: 2,
             useGrouping: false,
           })}`}</span>
-          <span>{beat?.duracion}</span>
+          <span>{beatPlaying?.duracion}</span>
         </div>
         <Range
           min={0}
