@@ -1,28 +1,13 @@
-# Create T3 App
+# 0800 Pancho's website
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+This repository contains the source code for the website of Argentinian beat maker, [0800 Pancho](https://www.youtube.com/channel/UCfJSpXKG2XWILMDP41XxmnQ). The site is built using [T3 Stack](https://create.t3.gg/).
 
-## What's next? How do I make an app with this?
+From T3 Stack's technologies, it was used:
+* [Next.js](https://nextjs.org) for the frontend
+* [NextAuth.js](https://next-auth.js.org) for authentication
+* [Prisma](https://prisma.io) for the database
+* [Tailwind CSS](https://tailwindcss.com) for styling
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+With Next.js, the website is built using server-side rendering, allowing for fast and efficient page loads. NextAuth provides secure authentication and authorization, ensuring that only authorized users can access admin panel. Prisma is used as an ORM to interact with the database and manage the data efficiently. The database is powered by [PlanetScale](https://planetscale.com), ensuring scalability and reliability. Tailwind CSS is used for styling, allowing for fast and efficient development while providing a modern and responsive design.
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
-
-## Learn More
-
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
-
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
-
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
-
-## How do I deploy this?
-
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
