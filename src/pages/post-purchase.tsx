@@ -4,7 +4,6 @@ import { PURCHASE_TEXTS } from "constants/index";
 import { HOME_PATH } from "routes";
 import { getMailtoTextPostPurchase } from "utils";
 import type { GetServerSideProps } from "next";
-import { env } from "env/client.mjs";
 
 const PostPurchase = () => {
   const { query } = useRouter();
@@ -30,7 +29,7 @@ const PostPurchase = () => {
               href={getMailtoTextPostPurchase(beatId as string)}
               className="font-bold text-primary underline underline-offset-4"
             >
-              {env.NEXT_PUBLIC_CONTACT_EMAIL}
+              {process.env.NEXT_PUBLIC_CONTACT_EMAIL}
             </a>{" "}
             aclarando que el id de compra es:{" "}
             <span className="font-bold text-primary">{beatId}</span>

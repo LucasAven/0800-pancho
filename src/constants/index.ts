@@ -1,4 +1,3 @@
-import { env } from "env/client.mjs";
 import type {
   LicensePerksDescription,
   LicenseType,
@@ -14,12 +13,12 @@ export const BEATS_PER_PAGE = 12;
 // Money constants
 export const DOLLARS_API_URL = "https://api.bluelytics.com.ar/v2/latest";
 export const DEFAULT_DOLLAR_VALUE = Number(
-  env.NEXT_PUBLIC_DEFAULT_DOLLAR_VALUE
+  process.env.NEXT_PUBLIC_DEFAULT_DOLLAR_VALUE
 );
 
 // Files constants
-export const IMAGE_PLACEHOLDER = "/image_placeholder.jpg";
-export const YOUTUBE_PROFILE_PICTURE = "/pancho_profile_logo.jpg";
+export const IMAGE_PLACEHOLDER = "/image_placeholder.png";
+export const YOUTUBE_PROFILE_PICTURE = "/pancho_profile_logo.png";
 export const YOUTUBE_VISUALIZATIONS_ICON = "/visualizacion.svg";
 export const YOUTUBE_VIDEOS_ICON = "/videos.svg";
 
@@ -34,7 +33,7 @@ export const BACKUP_YOUTUBE_STATS: YoutubeData = {
   },
 };
 export const INSTAGRAM_URL = "https://www.instagram.com/0800pancho_";
-export const YOUTUBE_CHANNEL_URL = `https://www.youtube.com/channel/${env.NEXT_PUBLIC_YT_CHANNEL_ID}`;
+export const YOUTUBE_CHANNEL_URL = `https://www.youtube.com/channel/${process.env.NEXT_PUBLIC_YT_CHANNEL_ID || ""}`;
 // Licenses constants
 export const BASIC_LICENSE_PERKS: LicensePerksDescription = {
   license: "basic",

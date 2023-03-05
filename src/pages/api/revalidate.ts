@@ -1,4 +1,3 @@
-import { env } from "env/server.mjs";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { HOME_PATH } from "routes";
 import NextCors from "utils/init-middleware";
@@ -16,7 +15,7 @@ export default async function handler(
   if (!secret || !beatId)
     return res.status(400).json({ message: "Missing data" });
 
-  if (req.query.secret !== env.REVALIDATE_SECRET)
+  if (req.query.secret !== process.env.REVALIDATE_SECRET)
     return res.status(401).json({ message: "Invalid token" });
 
   try {

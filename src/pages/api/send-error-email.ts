@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { env } from "env/server.mjs";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { createTransport, type SendMailOptions } from "nodemailer";
 import NextCors from "utils/init-middleware";
@@ -26,8 +25,8 @@ export default async function handler(
     const transporter = createTransport({
       service: "gmail",
       auth: {
-        user: env.GMAIL_USER,
-        pass: env.GMAIL_PASS,
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_PASS,
       },
     });
 
