@@ -14,7 +14,7 @@ const Layout: React.FC<ILayoutProps> = ({ children, className = "" }) => {
     <div className="flex h-screen flex-col justify-between pt-12">
       <Navbar className={className} />
       <main className={`${className} grow`}>{children}</main>
-      {pathname.includes("admin") && <Footer className={className} />}
+      {!pathname.includes("admin") && <Footer className={className} />}
     </div>
   );
 };
