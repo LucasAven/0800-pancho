@@ -3,10 +3,11 @@ import type { PricesObject } from "types";
 import License from "./License";
 
 export interface ILicensesProps {
-  prices: PricesObject;
+  prices: PricesObject | null;
 }
 
 const Licenses: React.FC<ILicensesProps> = ({ prices }) => {
+  if (!prices) return null;
   return (
     <section className="relative bg-space-image bg-cover bg-center bg-no-repeat shadow-sections">
       <SectionTitle className="bg-transparent bg-space-image bg-top" isAbsolute>
