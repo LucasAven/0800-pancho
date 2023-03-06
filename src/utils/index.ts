@@ -3,7 +3,6 @@ import { Prisma } from "@prisma/client";
 import axios from "axios";
 import { type ClassValue, clsx } from "clsx";
 import { DEFAULT_DOLLAR_VALUE, DOLLARS_API_URL } from "constants/index";
-import type { PaymentGetResponse } from "mercadopago/resources/payment";
 import type { SendMailOptions } from "nodemailer";
 import type { InfiniteData } from "react-query";
 import {
@@ -19,13 +18,11 @@ import {
   SEND_ERROR_EMAIL_API,
 } from "routes";
 import { twMerge } from "tailwind-merge";
-import { type ApiRouteResponse, UpdateBeatError } from "types";
 import type {
+  ApiRouteResponse,
   CheckoutBody,
   LicenseType,
   MailData,
-  MPExternalReference,
-  MPPaymentDataResponse,
   PricesObject,
   SelectorOption,
   YoutubeData,
@@ -255,63 +252,6 @@ export const getMailtoTextPostPurchase = (beatId: string) =>
 export const getCheckoutLink = async (data: CheckoutBody) => {
   const response = await axiosInstance.post(MP_CHECKOUT_API, data);
   return response.data as { checkoutLink: string };
-};
-
-export const updateBeats = async (paymentData: PaymentGetResponse) => {
-  const { external_reference, status, status_detail, id, collector_id } =
-    paymentData.body as MPPaymentDataResponse;
-  const { beatId, email, license } = JSON.parse(
-    external_reference
-  ) as MPExternalReference;
-  if (status !== "approved" || status_detail !== "accredited")
-    throw new UpdateBeatError({
-      errorType: "Payment not approved",
-      buyerEmail: email,
-      beatId,
-      transactionId: id,
-      collectorId: collector_id,
-      license,
-    });
-  const beatSold = await global.prisma?.beat.update({
-    where: { beatId },
-    data: {
-      sold: true,
-    },
-  });
-  if (!beatSold)
-    throw new UpdateBeatError({
-      errorType: "Beat not found",
-      buyerEmail: email,
-      beatId,
-      transactionId: id,
-      collectorId: collector_id,
-      license,
-    });
-  const beatFiles = await global.prisma?.file.findUnique({
-    where: { beatId },
-    select: {
-      baseFileUrl: license === "basic",
-      editableFileUrl: license === "custom",
-    },
-  });
-  if (!beatFiles?.baseFileUrl && !beatFiles?.editableFileUrl)
-    throw new UpdateBeatError({
-      errorType: "Beat files not found",
-      buyerEmail: email,
-      beatId,
-      transactionId: id,
-      collectorId: collector_id,
-      license,
-    });
-  await revalidateBeatPage(beatId);
-  await sendEmail(false, {
-    id: id.toString(),
-    collector_id,
-    email,
-    beat: beatSold.title,
-    license,
-    link: beatFiles?.baseFileUrl || beatFiles?.editableFileUrl,
-  });
 };
 
 export const revalidateBeatPage = async (beatId: string) => {

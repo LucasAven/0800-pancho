@@ -4,6 +4,7 @@ import { PURCHASE_TEXTS } from "constants/index";
 import { HOME_PATH } from "routes";
 import { getMailtoTextPostPurchase } from "utils";
 import type { GetServerSideProps } from "next";
+import { prisma } from "server/db";
 
 const PostPurchase = () => {
   const { query } = useRouter();
@@ -44,7 +45,7 @@ const PostPurchase = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-  const beat_data = await global.prisma?.beat.findUnique({
+  const beat_data = await prisma.beat.findUnique({
     where: {
       beatId: query?.beatId as string,
     },

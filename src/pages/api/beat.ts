@@ -1,6 +1,7 @@
 import type { Beat, File } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { unstable_getServerSession } from "next-auth/next";
+import { prisma } from "server/db";
 import type { ApiRouteResponse, BeatEditable } from "types";
 import { getVideoDuration, getYoutubeVideoIdFromUrl, handleDBError } from "utils";
 import { authOptions } from "./auth/[...nextauth]";
@@ -17,7 +18,7 @@ export default async function handler(
 
   switch (req.method) {
     case "GET":
-      const data = await prisma?.file.findUnique({
+      const data = await prisma.file.findUnique({
         where: {
           beatId: req.query.beatId as string,
         },
@@ -46,7 +47,7 @@ export default async function handler(
           previousBeatData.tag.toLowerCase()
         ) {
           // Create tag if it doesn't exist, otherwise update it
-          await prisma?.tag.upsert({
+          await prisma.tag.upsert({
             where: {
               tagName: beatEditedData.tag?.toLowerCase(),
             },
@@ -80,7 +81,7 @@ export default async function handler(
           searchTitle: beatEditedData.title?.toLowerCase(),
           sold: beatEditedData.sold,
         } as Beat;
-        await prisma?.beat.update({
+        await prisma.beat.update({
           where: {
             beatId: beatEditedData.beatId,
           },
@@ -93,7 +94,7 @@ export default async function handler(
         const hasNewEditableFileUrl =
           beatEditedData.editableFileUrl !== previousBeatData.editableFileUrl;
         if (hasNewBaseFileUrl || hasNewEditableFileUrl) {
-          await prisma?.file.update({
+          await prisma.file.update({
             where: {
               beatId: req.query.beatId as string,
             },
@@ -127,7 +128,7 @@ export default async function handler(
 
       try {
         // Create beat
-        const beatCreated = await prisma?.beat.create({ data: newBeat });
+        const beatCreated = await prisma.beat.create({ data: newBeat });
 
         if (!beatCreated?.beatId) {
           res.status(500).send({ message: "Internal server error." });
@@ -135,7 +136,7 @@ export default async function handler(
         }
 
         // Create tag if it doesn't exist, otherwise update it
-        await prisma?.tag.upsert({
+        await prisma.tag.upsert({
           where: {
             tagName: newBeat.tag?.toLowerCase(),
           },
@@ -148,7 +149,7 @@ export default async function handler(
         });
 
         // Create beat links
-        await prisma?.file.create({
+        await prisma.file.create({
           data: { ...newLinks, beatId: beatCreated.beatId },
         });
 
@@ -161,14 +162,14 @@ export default async function handler(
 
     case "DELETE":
       // Delete beat
-      await prisma?.beat.delete({
+      await prisma.beat.delete({
         where: {
           beatId: req.query.beatId as string,
         },
       });
 
       // Delete beat links
-      await prisma?.file.delete({
+      await prisma.file.delete({
         where: {
           beatId: req.query.beatId as string,
         },

@@ -16,7 +16,6 @@ import {
   convertUSDPricesToARS,
   fetchDollarPrice,
   getCheckoutLink,
-  getPrices,
 } from "utils";
 import { useForm } from "react-hook-form";
 import type {
@@ -25,6 +24,7 @@ import type {
   InferGetStaticPropsType,
 } from "next";
 import { useQuery } from "react-query";
+import { prisma } from "server/db";
 
 const BeatPage = ({
   beat,
@@ -170,7 +170,7 @@ export const getStaticProps: GetStaticProps<{
   beat: BeatData;
   usdPrices: PricesObject;
 }> = async (ctx) => {
-  const beat_data = await global.prisma?.beat.findUnique({
+  const beat_data = await prisma.beat.findUnique({
     where: {
       beatId: ctx.params?.beatId as string,
     },
@@ -178,7 +178,16 @@ export const getStaticProps: GetStaticProps<{
 
   const beat = !beat_data ? null : beat_data;
 
-  const usdPrices = await getPrices();
+  const prices_data = await prisma.price.findMany({
+    take: 5,
+  });
+
+  const usdPrices = !prices_data
+    ? undefined
+    : prices_data.reduce((acc, curr) => {
+        acc[curr.licenseType as LicenseType] = curr.price;
+        return acc;
+      }, {} as PricesObject);
 
   if (!beat || beat.sold || !usdPrices) {
     return {
@@ -193,7 +202,7 @@ export const getStaticProps: GetStaticProps<{
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const data = await global.prisma?.beat.findMany({
+  const data = await prisma.beat.findMany({
     select: {
       beatId: true,
     },

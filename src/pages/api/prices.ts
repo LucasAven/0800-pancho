@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { prisma } from "server/db";
 import type { ApiRouteResponse, LicenseType, PricesObject } from "types";
 import NextCors from "utils/init-middleware";
 
@@ -15,12 +16,12 @@ export default async function handler(
       const { pricesQuantity } = req.query;
       const pricesQuantityNumber = pricesQuantity ? Number(pricesQuantity) : 5;
       try {
-        const prices_data = await global.prisma?.price.findMany({
+        const prices_data = await prisma.price.findMany({
           take: pricesQuantityNumber,
         });
 
         const prices = !prices_data
-          ? ({} as PricesObject)
+          ? undefined
           : prices_data.reduce((acc, curr) => {
               acc[curr.licenseType as LicenseType] = curr.price;
               return acc;
@@ -43,7 +44,7 @@ export default async function handler(
             return res
               .status(400)
               .send({ message: "Bad request. Non negative values allowed" });
-          await global.prisma?.price.update({
+          await prisma.price.update({
             where: { licenseType: license as LicenseType },
             data: { price: Number(price) },
           });

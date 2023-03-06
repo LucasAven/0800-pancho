@@ -1,6 +1,7 @@
 import type { Beat } from "@prisma/client";
 import { BEATS_PER_PAGE } from "constants/index";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { prisma } from "server/db";
 import NextCors from "utils/init-middleware";
 
 type BeatsResponseCursor = {
@@ -26,7 +27,7 @@ export default async function handler(
     const soldBeatsBool = soldBeats ? soldBeats === "true" : false;
 
     try {
-      const beats = await prisma?.beat.findMany({
+      const beats = await prisma.beat.findMany({
         skip: cursor ? 1 : 0,
         cursor: cursor ? { id: parseInt(cursor as string, 10) } : undefined,
         take: soldBeats ? undefined : BEATS_PER_PAGE,

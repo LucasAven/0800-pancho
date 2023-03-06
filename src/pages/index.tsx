@@ -22,6 +22,7 @@ import {
   getYoutubeData,
 } from "utils";
 import { useMemo } from "react";
+import { prisma } from "server/db";
 
 const Home = ({ beats }: InferGetStaticPropsType<typeof getStaticProps>) => {
   const queryClient = useQueryClient();
@@ -81,7 +82,7 @@ const Home = ({ beats }: InferGetStaticPropsType<typeof getStaticProps>) => {
 export const getStaticProps: GetStaticProps<{
   beats: BeatData[];
 }> = async () => {
-  const beatsData = await global.prisma?.beat.findMany({
+  const beatsData = await prisma.beat.findMany({
     take: BEATS_MAIN_PAGE,
   });
   const beats = !beatsData ? [] : beatsData;

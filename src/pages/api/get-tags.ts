@@ -1,5 +1,6 @@
 import type { Tag } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { prisma } from "server/db";
 import type { ApiRouteResponse } from "types";
 import { handleDBError } from "utils";
 import NextCors from "utils/init-middleware";
@@ -15,7 +16,7 @@ export default async function handler(
 
   if (req.method === "GET") {
     try {
-      const data = await prisma?.tag.findMany({
+      const data = await prisma.tag.findMany({
         take: 100
       });
       return res.status(200).json({ value: data ?? [] });

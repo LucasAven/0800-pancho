@@ -1,7 +1,9 @@
 import { payment } from "mercadopago";
 import type { NextApiRequest, NextApiResponse } from "next";
-import type { UpdateBeatError } from "types";
-import { sendErrorEmail, updateBeats } from "utils";
+import { prisma } from "server/db";
+import { UpdateBeatError } from "types";
+import type { MPExternalReference, MPPaymentDataResponse } from "types";
+import { revalidateBeatPage, sendEmail, sendErrorEmail } from "utils";
 import NextCors from "utils/init-middleware";
 
 export default async function handler(
@@ -19,7 +21,63 @@ export default async function handler(
     if (body.action === "payment.created") {
       try {
         const paymentData = await payment.get(body.data.id);
-        await updateBeats(paymentData);
+
+        const { external_reference, status, status_detail, id, collector_id } =
+          paymentData.body as MPPaymentDataResponse;
+        const { beatId, email, license } = JSON.parse(
+          external_reference
+        ) as MPExternalReference;
+
+        if (status !== "approved" || status_detail !== "accredited")
+          throw new UpdateBeatError({
+            errorType: "Payment not approved",
+            buyerEmail: email,
+            beatId,
+            transactionId: id,
+            collectorId: collector_id,
+            license,
+          });
+        const beatSold = await prisma.beat.update({
+          where: { beatId },
+          data: {
+            sold: true,
+          },
+        });
+        if (!beatSold)
+          throw new UpdateBeatError({
+            errorType: "Beat not found",
+            buyerEmail: email,
+            beatId,
+            transactionId: id,
+            collectorId: collector_id,
+            license,
+          });
+        const beatFiles = await prisma.file.findUnique({
+          where: { beatId },
+          select: {
+            baseFileUrl: license === "basic",
+            editableFileUrl: license === "custom",
+          },
+        });
+        if (!beatFiles?.baseFileUrl && !beatFiles?.editableFileUrl)
+          throw new UpdateBeatError({
+            errorType: "Beat files not found",
+            buyerEmail: email,
+            beatId,
+            transactionId: id,
+            collectorId: collector_id,
+            license,
+          });
+        await revalidateBeatPage(beatId);
+        await sendEmail(false, {
+          id: id.toString(),
+          collector_id,
+          email,
+          beat: beatSold.title,
+          license,
+          link: beatFiles?.baseFileUrl || beatFiles?.editableFileUrl,
+        });
+
       } catch (err) {
         const { beatId, buyerEmail, collectorId, errorType, license } =
           err as UpdateBeatError;
