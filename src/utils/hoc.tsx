@@ -26,7 +26,7 @@ export const withProtected = (Component: NextPage) => {
 
     // if the user refreshed the page or somehow navigated to the protected page
     if (loading) {
-      return <Loader />;
+      return <Loader className="absolute" />;
     }
 
     // if the user is authorized, render the page

@@ -231,7 +231,7 @@ const CreateBeatModal: React.FC<ICreateBeatModalProps> = ({
           className="primary-button relative mx-auto mt-5"
           disabled={isLoading}
         >
-          {isLoading ? <Loader className="static p-1.5" /> : "Crear"}
+          {isLoading ? <Loader className="p-1.5" /> : "Crear"}
         </button>
       </form>
     </Modal>

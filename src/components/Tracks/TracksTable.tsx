@@ -206,7 +206,7 @@ const TracksTable: React.FC<ITracksTableProps> = ({
                 )}
               >
                 <td>
-                  <Loader />
+                  <Loader className="absolute" />
                 </td>
               </tr>
             </tbody>

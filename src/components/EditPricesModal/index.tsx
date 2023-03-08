@@ -171,7 +171,7 @@ const EditPricesModal: React.FC<IEditPricesModalProps> = ({
           className="primary-button relative mx-auto mt-5"
           disabled={isLoading}
         >
-          {isLoading ? <Loader className="static p-1.5" /> : "Guardar"}
+          {isLoading ? <Loader className="p-1.5" /> : "Guardar"}
         </button>
       </form>
     </Modal>

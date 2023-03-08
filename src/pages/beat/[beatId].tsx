@@ -156,7 +156,7 @@ const BeatPage = ({
                 className="primary-button text-black"
                 disabled={!license || loading}
               >
-                {loading ? <Loader className="static p-1.5" /> : "Comprar"}
+                {loading ? <Loader className="p-1.5" /> : "Comprar"}
               </button>
             </div>
           </div>
