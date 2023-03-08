@@ -14,7 +14,7 @@ const Footer = ({ className = "" }) => {
     <footer
       className={cn(
         className,
-        "flex min-h-[150px] flex-col justify-center text-baseText shadow-sections"
+        "flex min-h-[180px] flex-col justify-center text-baseText shadow-sections"
       )}
     >
       <div className="mt-auto flex justify-around">
@@ -55,16 +55,19 @@ const Footer = ({ className = "" }) => {
           </CustomLink>
         </div>
       </div>
-      <p className="mt-auto w-full pb-2 text-center">
-        Copyright ©{" "}
-        <CustomLink
-          href={LUCAS_PORTFOLIO_URL}
-          className="text-base underline underline-offset-2"
-          isExternalLink
-        >
-          Lucas Avendaño
-        </CustomLink>{" "}
-        {new Date().getFullYear()}
+      <p className="mt-auto w-full pb-2 text-center font-bold">
+        Copyright © 0800Pancho {new Date().getFullYear()}
+        <br />
+        <span className="text-sm font-normal">
+          Diseño y desarrollo{" "}
+          <CustomLink
+            href={LUCAS_PORTFOLIO_URL}
+            className="text-sm underline underline-offset-2"
+            isExternalLink
+          >
+            Lucas Avendaño
+          </CustomLink>
+        </span>
       </p>
     </footer>
   );
