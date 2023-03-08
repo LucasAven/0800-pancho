@@ -4,15 +4,11 @@ import { prisma } from "server/db";
 import { UpdateBeatError } from "types";
 import type { MPExternalReference, MPPaymentDataResponse } from "types";
 import { revalidateBeatPage, sendEmail, sendErrorEmail } from "utils";
-import NextCors from "utils/init-middleware";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  await NextCors(req, res, {
-    methods: ["POST"],
-  });
 
   if (req.method === "POST") {
     const { body } = req as {
@@ -95,7 +91,7 @@ export default async function handler(
         });
       }
     }
-    return res.status(200);
+    return res.status(200).json({ message: "ok" });
   } else {
     return res.status(405).send({ message: "Method not allowed." });
   }
